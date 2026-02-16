@@ -1,0 +1,540 @@
+{% extends "admin/base.html" %} {% load static %} {% block extrastyle %} {{ block.super }}
+<style>
+  /* ============================================
+     PALETA DE COLORES: VERDE Y GRIS CLARO
+     ============================================ */
+  :root {
+    --verde: #27ae60;
+    --verde-hover: #229954;
+    --blanco: #ffffff;
+    --fondo-gris: #f6f8f6;
+    --texto: #1a1a1a;
+    --gris-claro: #f5f5f5;
+    --border-gris: #e0e0e0;
+  }
+
+  /* Reset background general */
+  body {
+    background: var(--fondo-gris) !important;
+    color: var(--texto) !important;
+  }
+
+  /* ============================================
+     TODOS LOS TEXTOS NEGROS POR DEFECTO
+     ============================================ */
+  body,
+  p,
+  span,
+  div,
+  label,
+  td,
+  th:not(thead th),
+  li,
+  input,
+  select,
+  textarea,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--texto) !important;
+  }
+
+  /* Excepciones: texto blanco en elementos verdes */
+  thead th,
+  .module h2,
+  .module h2 a,
+  .dashboard .module h2,
+  .dashboard .module h2 a,
+  .button,
+  input[type="submit"],
+  button[type="submit"],
+  .object-tools a,
+  .submit-row input {
+    color: var(--blanco) !important;
+  }
+
+  /* ============================================
+     HEADER
+     ============================================ */
+  #header {
+    background: var(--fondo-gris) !important;
+    color: var(--texto) !important;
+    border-bottom: 2px solid var(--verde) !important;
+  }
+
+  #branding h1,
+  #branding h1 a {
+    color: var(--texto) !important;
+  }
+
+  #user-tools {
+    color: var(--texto) !important;
+  }
+
+  #user-tools a {
+    color: var(--texto) !important;
+  }
+
+  #user-tools a:hover {
+    color: var(--verde) !important;
+  }
+
+  /* ============================================
+     SIDEBAR
+     ============================================ */
+  #nav-sidebar {
+    background: var(--fondo-gris) !important;
+    border-right: 1px solid var(--border-gris) !important;
+  }
+
+  #nav-sidebar a {
+    color: var(--texto) !important;
+  }
+
+  #nav-sidebar a:hover,
+  #nav-sidebar .current a {
+    background: var(--verde) !important;
+    color: var(--blanco) !important;
+  }
+
+  #nav-sidebar .current-app > a {
+    background: var(--verde) !important;
+    color: var(--blanco) !important;
+  }
+
+  /* ============================================
+     BREADCRUMBS
+     ============================================ */
+  div.breadcrumbs {
+    background: var(--fondo-gris) !important;
+    color: var(--texto) !important;
+    border-bottom: 1px solid var(--border-gris) !important;
+  }
+
+  div.breadcrumbs a {
+    color: var(--texto) !important;
+  }
+
+  /* ============================================
+     CONTENT AREA
+     ============================================ */
+  #content,
+  #content-main {
+    background: var(--fondo-gris) !important;
+  }
+
+  /* ============================================
+     MODULES & CARDS
+     ============================================ */
+  .module,
+  .dashboard .module,
+  fieldset {
+    background: var(--blanco) !important;
+    border: 1px solid var(--border-gris) !important;
+    border-radius: 8px !important;
+  }
+
+  .module h2,
+  .module caption,
+  .inline-group h2,
+  .dashboard .module h2 {
+    background: var(--verde) !important;
+    color: var(--blanco) !important;
+    border: none !important;
+  }
+
+  .module h2 a,
+  .dashboard .module h2 a {
+    color: var(--blanco) !important;
+  }
+
+  /* ============================================
+     TABLAS
+     ============================================ */
+  table {
+    background: var(--blanco) !important;
+  }
+
+  thead th,
+  .results thead th {
+    background: var(--verde) !important;
+    color: var(--blanco) !important;
+    border: none !important;
+  }
+
+  tbody tr,
+  .results tbody tr {
+    background: var(--blanco) !important;
+  }
+
+  tbody tr:hover,
+  .results tbody tr:hover {
+    background: rgba(39, 174, 96, 0.1) !important;
+  }
+
+  tbody th,
+  tbody td {
+    border-bottom: 1px solid var(--border-gris) !important;
+    background: transparent !important;
+  }
+
+  /* Eliminar fondos oscuros de admin por defecto */
+  .change-list .results tbody tr:nth-child(odd) {
+    background: var(--blanco) !important;
+  }
+
+  .change-list .results tbody tr:nth-child(even) {
+    background: var(--gris-claro) !important;
+  }
+
+  /* ============================================
+     BOTONES
+     ============================================ */
+  .button,
+  input[type="submit"],
+  input[type="button"],
+  .submit-row input,
+  a.button,
+  button {
+    background: var(--verde) !important;
+    color: var(--blanco) !important;
+    border: none !important;
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+  }
+
+  .button:hover,
+  input[type="submit"]:hover,
+  input[type="button"]:hover,
+  .submit-row input:hover,
+  a.button:hover,
+  button:hover {
+    background: var(--verde-hover) !important;
+  }
+
+  .button.default,
+  input[type="submit"].default {
+    background: var(--verde) !important;
+  }
+
+  /* Botón añadir */
+  .addlink,
+  .add-row a {
+    color: var(--texto) !important;
+  }
+
+  .addlink:hover,
+  .add-row a:hover {
+    color: var(--verde) !important;
+  }
+
+  .object-tools a {
+    background: var(--verde) !important;
+    color: var(--blanco) !important;
+  }
+
+  /* ============================================
+     ENLACES
+     ============================================ */
+  a,
+  a:link,
+  a:visited {
+    color: var(--texto) !important;
+  }
+
+  a:hover {
+    color: var(--verde) !important;
+  }
+
+  /* ============================================
+     INPUTS Y FORMULARIOS
+     ============================================ */
+  input[type="text"],
+  input[type="password"],
+  input[type="email"],
+  input[type="number"],
+  input[type="url"],
+  input[type="date"],
+  input[type="time"],
+  textarea,
+  select {
+    background: var(--blanco) !important;
+    border: 1px solid var(--border-gris) !important;
+    border-radius: 4px !important;
+  }
+
+  input[type="text"]:focus,
+  input[type="password"]:focus,
+  input[type="email"]:focus,
+  input[type="number"]:focus,
+  input[type="url"]:focus,
+  input[type="date"]:focus,
+  input[type="time"]:focus,
+  textarea:focus,
+  select:focus {
+    border-color: var(--verde) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 2px rgba(39, 174, 96, 0.2) !important;
+  }
+
+  /* ============================================
+     MENSAJES
+     ============================================ */
+  .messagelist li {
+    background: var(--blanco) !important;
+    border-left: 4px solid var(--verde) !important;
+  }
+
+  .messagelist .success {
+    background: rgba(39, 174, 96, 0.1) !important;
+    border-left-color: var(--verde) !important;
+  }
+
+  /* ============================================
+     CHECKBOXES Y RADIOS
+     ============================================ */
+  input[type="checkbox"],
+  input[type="radio"] {
+    accent-color: var(--verde) !important;
+  }
+
+  /* ============================================
+     SELECTORES
+     ============================================ */
+  .selector,
+  .selector .selector-available,
+  .selector .selector-chosen {
+    background: var(--fondo-gris) !important;
+  }
+
+  .selector h2 {
+    background: var(--verde) !important;
+    color: var(--blanco) !important;
+  }
+
+  .selector-chosen h2 {
+    background: var(--verde) !important;
+    color: var(--blanco) !important;
+  }
+
+  /* ============================================
+     FILTROS
+     ============================================ */
+  #changelist-filter {
+    background: var(--fondo-gris) !important;
+    border-left: 1px solid var(--border-gris) !important;
+  }
+
+  #changelist-filter h2 {
+    background: var(--verde) !important;
+    color: var(--blanco) !important;
+  }
+
+  #changelist-filter h3 {
+    color: var(--texto) !important;
+  }
+
+  #changelist-filter li.selected a {
+    color: var(--texto) !important;
+    font-weight: bold !important;
+  }
+
+  /* ============================================
+     PAGINACIÓN
+     ============================================ */
+  .paginator {
+    color: var(--texto) !important;
+  }
+
+  .paginator a {
+    background: var(--fondo-gris) !important;
+    border: 1px solid var(--border-gris) !important;
+  }
+
+  .paginator a:hover,
+  .paginator .this-page {
+    background: var(--verde) !important;
+    color: var(--blanco) !important;
+    border-color: var(--verde) !important;
+  }
+
+  /* ============================================
+     ACCIONES
+     ============================================ */
+  .actions {
+    background: var(--blanco) !important;
+    border-top: 1px solid var(--border-gris) !important;
+  }
+
+  .actions select {
+    background: var(--fondo-gris) !important;
+  }
+
+  .actions button {
+    background: var(--verde) !important;
+    color: var(--blanco) !important;
+  }
+
+  /* ============================================
+     OTROS ELEMENTOS OSCUROS QUE NECESITAN SER BLANCOS
+     ============================================ */
+  .colMS,
+  .colM,
+  .colSM {
+    background: var(--fondo-gris) !important;
+  }
+
+  .inline-group,
+  .inline-related {
+    background: var(--fondo-gris) !important;
+  }
+
+  .submit-row {
+    background: var(--gris-claro) !important;
+  }
+
+  /* ============================================
+     FOOTER
+     ============================================ */
+  #footer {
+    background: var(--fondo-gris) !important;
+    color: var(--texto) !important;
+    border-top: 2px solid var(--verde) !important;
+  }
+
+  #footer a {
+    color: var(--texto) !important;
+  }
+
+  #footer a:hover {
+    color: var(--verde) !important;
+  }
+
+  /* ============================================
+     ELIMINAR FONDOS NEGROS/OSCUROS
+     ============================================ */
+  .searchbar,
+  #toolbar,
+  #changelist-filter,
+  .filtered,
+  .filtered .actions,
+  .actions,
+  .change-list .filtered .actions,
+  .change-list .actions,
+  #changelist-form .actions,
+  #changelist .actions {
+    background: var(--fondo-gris) !important;
+    background-color: var(--fondo-gris) !important;
+  }
+
+  /* Barra de búsqueda específica */
+  #changelist-search,
+  .changelist-form-container,
+  #changelist-form {
+    background: var(--fondo-gris) !important;
+    background-color: var(--fondo-gris) !important;
+  }
+
+  /* Formularios de acción */
+  .actions label,
+  .actions span,
+  .actions .action-counter {
+    color: var(--texto) !important;
+  }
+
+  /* Todos los divs, containers y secciones */
+  div[style*="background"],
+  div[style*="black"],
+  section,
+  article,
+  .container,
+  .wrapper {
+    background: var(--fondo-gris) !important;
+  }
+
+  /* Forzar gris claro en cualquier elemento con clase que contenga 'dark' o 'black' */
+  [class*="dark"],
+  [class*="black"],
+  [class*="negro"] {
+    background: var(--fondo-gris) !important;
+    background-color: var(--fondo-gris) !important;
+  }
+
+  /* Inputs dentro de acciones */
+  .actions input[type="text"],
+  .actions select,
+  #changelist-search input {
+    background: var(--fondo-gris) !important;
+    border: 1px solid var(--border-gris) !important;
+  }
+
+  /* ============================================
+     REGLAS UNIVERSALES ANTI-NEGRO
+     ============================================ */
+  /* Forzar TODO a gris claro excepto botones y headers verdes */
+  * {
+    background-color: transparent !important;
+  }
+
+  body,
+  html,
+  main,
+  #container,
+  #content,
+  #content-main,
+  .content,
+  form,
+  fieldset,
+  table,
+  tbody,
+  tr,
+  td,
+  th,
+  div:not(.actions button):not(.button):not([class*="verde"]),
+  section,
+  article {
+    background: var(--fondo-gris) !important;
+  }
+
+  /* Excepciones - Elementos que deben ser verdes */
+  .button,
+  input[type="submit"],
+  button[type="submit"],
+  thead th,
+  .module h2,
+  #header,
+  .object-tools a {
+    background: var(--verde) !important;
+    background-color: var(--verde) !important;
+  }
+
+  /* Submit row específico */
+  .submit-row {
+    background: var(--gris-claro) !important;
+    background-color: var(--gris-claro) !important;
+  }
+
+  /* Eliminar sombras oscuras */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Re-aplicar solo sombras sutiles donde sea necesario */
+  .module,
+  .dashboard .module,
+  table {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  }
+</style>
+{% endblock %} {% block footer %}
+<div id="footer">
+  <p>
+    <strong>Semillero de Ingeniería Agrícola - Universidad Nacional de Colombia</strong><br />
+    Panel de Administración | Email: <a href="mailto:julianrf527@gmail.com">julianrf527@gmail.com</a>
+  </p>
+</div>
+{% endblock %}

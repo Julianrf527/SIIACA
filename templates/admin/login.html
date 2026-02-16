@@ -1,0 +1,147 @@
+{% extends "admin/base.html" %} {% load i18n static %} {% block extrastyle %}
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          primary: "#27ae60",
+          "background-light": "#f6f8f6",
+          "background-dark": "#102215",
+        },
+        fontFamily: {
+          display: ["Space Grotesk"],
+        },
+        borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+      },
+    },
+  };
+</script>
+<style>
+  body.login {
+    font-family: "Space Grotesk", sans-serif;
+    background: #f6f8f6;
+    background-image: linear-gradient(rgba(246, 248, 246, 0.9), rgba(246, 248, 246, 0.9)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><rect fill="%23f6f8f6" width="1200" height="800"/><circle fill="%2327ae60" fill-opacity="0.05" cx="200" cy="200" r="150"/><circle fill="%2327ae60" fill-opacity="0.05" cx="900" cy="500" r="200"/><circle fill="%2327ae60" fill-opacity="0.05" cx="600" cy="600" r="180"/></svg>');
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+
+  /* Ocultar elementos del admin */
+  .login #nav-sidebar,
+  .login .breadcrumbs,
+  .login #user-tools,
+  .login #header {
+    display: none !important;
+  }
+
+  .login #container,
+  .login #content-main,
+  .login #content {
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  /* Estilos para los inputs de Django */
+  .login input[type="text"],
+  .login input[type="password"],
+  .login input#id_username,
+  .login input#id_password {
+    width: 100% !important;
+    padding: 0.75rem 1rem 0.75rem 2.5rem !important;
+    background: #ffffff !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 0.5rem !important;
+    color: #111827 !important;
+    font-size: 1rem !important;
+    font-family: "Space Grotesk", sans-serif !important;
+    transition: all 0.2s ease !important;
+  }
+
+  .login input[type="text"]:focus,
+  .login input[type="password"]:focus,
+  .login input#id_username:focus,
+  .login input#id_password:focus {
+    outline: none !important;
+    border-color: #27ae60 !important;
+    box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1) !important;
+  }
+
+  .login input[type="text"]::placeholder,
+  .login input[type="password"]::placeholder {
+    color: #9ca3af !important;
+    opacity: 1 !important;
+  }
+</style>
+{% endblock %} {% block bodyclass %}{{ block.super }} login{% endblock %} {% block usertools %}{% endblock %} {% block nav-global %}{% endblock %} {% block nav-sidebar %}{% endblock %} {% block content_title %}{% endblock %} {% block breadcrumbs %}{% endblock %} {% block content %}
+<main class="relative z-10 w-full max-w-md mx-auto mt-16">
+  <div class="bg-white/80 backdrop-blur-md border border-primary/10 rounded-xl shadow-2xl overflow-hidden">
+    <div class="p-8 pb-4 text-center">
+      <!-- Brand Logo / Icon -->
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-6">
+        <span class="material-symbols-outlined text-primary text-4xl">eco</span>
+      </div>
+      <h1 class="text-3xl font-bold text-[#1a1a1a] tracking-tight">Agri-Eng</h1>
+      <p class="text-sm font-medium text-[#1a1a1a] uppercase tracking-widest mt-1">Research Group</p>
+    </div>
+
+    {% if form.errors %}
+    <div class="mx-8 mb-4 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm">{% if form.errors.items|length == 1 %}Por favor corrige el error a continuación.{% else %}Por favor corrige los errores a continuación.{% endif %}</div>
+    {% endif %}
+
+    <form action="{{ app_path }}" method="post" class="p-8 pt-4 space-y-5">
+      {% csrf_token %}
+
+      <!-- Username Input -->
+      <div class="space-y-2">
+        <label class="block text-xs font-semibold text-[#1a1a1a] uppercase tracking-wider px-1" for="id_username">Username</label>
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+            <span class="material-symbols-outlined text-xl">person</span>
+          </span>
+          <input class="block w-full pl-10 pr-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200" id="id_username" name="username" placeholder="e.g. researcher@agri-eng.edu" type="text" value="{{ form.username.value|default:'' }}" required />
+        </div>
+      </div>
+
+      <!-- Password Input -->
+      <div class="space-y-2">
+        <div class="flex justify-between items-center px-1">
+          <label class="block text-xs font-semibold text-[#1a1a1a] uppercase tracking-wider" for="id_password">Password</label>
+          <a class="text-xs font-medium text-[#1a1a1a] hover:text-primary transition-colors" href="mailto:julianrf527@gmail.com">Forgot password?</a>
+        </div>
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+            <span class="material-symbols-outlined text-xl">lock</span>
+          </span>
+          <input class="block w-full pl-10 pr-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200" id="id_password" name="password" placeholder="••••••••" type="password" required />
+        </div>
+      </div>
+
+      <input type="hidden" name="next" value="{{ next }}" />
+
+      <!-- Submit Button -->
+      <button class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3.5 px-4 rounded-lg shadow-lg shadow-primary/20 transform active:scale-[0.98] transition-all duration-150 flex items-center justify-center space-x-2" type="submit">
+        <span>Log In</span>
+        <span class="material-symbols-outlined text-lg">login</span>
+      </button>
+
+      <!-- Help/Support Text -->
+      <div class="pt-6 border-t border-gray-100 text-center">
+        <p class="text-[10px] text-[#1a1a1a] uppercase tracking-widest">© 2024 Semillero de Ingeniería Agrícola - UNAL</p>
+      </div>
+    </form>
+  </div>
+</main>
+{% endblock %}

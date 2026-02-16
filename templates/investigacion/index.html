@@ -1,0 +1,324 @@
+{% extends 'base.html' %} {% load static %} {% block title %}Página de Inicio | Semillero Ingeniería Agrícola UNAL{% endblock %} {% block content %}
+<!-- Hero Carousel Section - 3 Imágenes Destacadas -->
+<section class="max-w-[1200px] mx-auto px-4 py-8">
+  <div id="carousel" class="relative overflow-hidden rounded-xl bg-background-dark h-[450px]">
+    {% for destacado in destacados %}
+    <div class="carousel-item {% if forloop.first %}active{% endif %} absolute inset-0 transition-opacity duration-700 {% if not forloop.first %}opacity-0{% endif %}">
+      <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('{% if destacado.imagen %}{{ destacado.imagen.url }}{% else %}https://via.placeholder.com/1200x450/13ec13/000000?text=Destacado{% endif %}');"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+      <div class="absolute bottom-10 left-10 max-w-2xl text-white">
+        <span class="bg-primary text-black px-3 py-1 rounded-full text-xs font-bold mb-4 inline-block">DESTACADO</span>
+        <h2 class="text-4xl md:text-5xl font-bold mb-4">{{ destacado.titulo }}</h2>
+        <p class="text-lg opacity-90 mb-6">{{ destacado.descripcion }}</p>
+      </div>
+    </div>
+    {% endfor %}
+
+    <!-- Controles del carrusel -->
+    <div class="absolute bottom-10 right-10 flex gap-2">
+      <button onclick="prevSlide()" class="bg-white/20 backdrop-blur-md p-3 rounded-full hover:bg-white/40">
+        <span class="material-symbols-outlined text-white">chevron_left</span>
+      </button>
+      <button onclick="nextSlide()" class="bg-white/20 backdrop-blur-md p-3 rounded-full hover:bg-white/40">
+        <span class="material-symbols-outlined text-white">chevron_right</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Recent News (Noticias) -->
+<section class="max-w-[1200px] mx-auto px-4 py-12" id="noticias">
+  <div class="flex items-center justify-between mb-8 px-2">
+    <h2 class="text-3xl font-bold tracking-tight border-l-4 border-primary pl-4">Noticias Recientes</h2>
+  </div>
+
+  <!-- Carrusel de Noticias - 3 visibles -->
+  <div class="relative">
+    <div id="news-carousel" class="overflow-hidden">
+      <div class="flex transition-transform duration-300 ease-in-out" style="transform: translateX(0%)">
+        {% for noticia in noticias %}
+        <div class="flex-shrink-0 w-full md:w-1/3 px-4">
+          <div class="group flex flex-col bg-white dark:bg-[#152a15] rounded-xl shadow-sm hover:shadow-xl transition-all border border-[#e7f3e7] dark:border-[#1a331a] h-full">
+            <div class="relative aspect-video overflow-hidden rounded-t-xl">
+              <div class="absolute inset-0 bg-center bg-cover transition-transform duration-500 group-hover:scale-110" style="background-image: url('{% if noticia.foto %}{{ noticia.foto.url }}{% else %}https://via.placeholder.com/400x300/13ec13/000000?text=Noticia{% endif %}');"></div>
+            </div>
+            <div class="p-6 flex flex-col flex-grow">
+              <span class="text-xs font-bold text-primary mb-2 block">{{ noticia.categoria }}</span>
+              <h3 class="text-xl font-bold mb-2 group-hover:text-primary transition-colors leading-snug">{{ noticia.titulo }}</h3>
+              <p class="text-sm text-[#4c9a4c] mb-4">{{ noticia.fecha_publicacion|date:"F d, Y" }}</p>
+              <p class="text-sm opacity-80 mb-4 line-clamp-3">{{ noticia.descripcion|truncatewords:20 }}</p>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Research Projects (Investigaciones) -->
+<section class="bg-[#eef5ee] dark:bg-[#0c1a0c] py-20 px-4" id="investigaciones">
+  <div class="max-w-[1200px] mx-auto">
+    <div class="flex flex-col mb-8 text-center items-center">
+      <h2 class="text-4xl font-bold mb-4">Investigaciones</h2>
+      <div class="w-20 h-1.5 bg-primary rounded-full mb-6"></div>
+      <p class="max-w-2xl opacity-75 mb-6">Nuestros proyectos buscan dar soluciones sostenibles y tecnológicas a los retos actuales del agro colombiano.</p>
+    </div>
+
+    <!-- Carrusel de Investigaciones - 2 visibles, scroll de 1 en 1 -->
+    <div class="relative">
+      <div id="research-carousel" class="overflow-hidden">
+        <div class="flex transition-transform duration-300 ease-in-out" style="transform: translateX(0%)">
+          {% for investigacion in investigaciones %}
+          <div class="flex-shrink-0 w-full md:w-1/2 px-4">
+            <div class="flex flex-col lg:flex-row bg-white dark:bg-background-dark rounded-xl shadow-lg overflow-hidden border border-[#e7f3e7] dark:border-[#1a331a] h-full">
+              <div class="lg:w-2/5 h-64 lg:h-auto bg-center bg-cover" style="background-image: url('{% if investigacion.foto %}{{ investigacion.foto.url }}{% else %}https://via.placeholder.com/400x600/13ec13/000000?text=Investigacion{% endif %}');"></div>
+              <div class="p-8 lg:w-3/5 flex flex-col justify-between">
+                <div>
+                  <h3 class="text-2xl font-bold mb-3">{{ investigacion.titulo }}</h3>
+                  <p class="text-sm opacity-70 mb-6 leading-relaxed">{{ investigacion.descripcion|truncatewords:30 }}</p>
+                </div>
+                <div class="flex items-center justify-between mt-4">
+                  <p class="text-sm text-[#4c9a4c] font-semibold">{{ investigacion.autores }}</p>
+                  {% if investigacion.url_doc %}
+                  <a href="{{ investigacion.url_doc.url }}" target="_blank" class="bg-primary hover:bg-primary/90 text-black px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-all">
+                    <span class="material-symbols-outlined">download</span>
+                    PDF
+                  </a>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Controles del carrusel de investigaciones -->
+      <button onclick="scrollResearch(-1)" class="absolute left-0 top-1/2 -translate-y-1/2 bg-white/90 dark:bg-background-dark/90 p-3 rounded-full shadow-lg hover:bg-primary transition-all">
+        <span class="material-symbols-outlined">chevron_left</span>
+      </button>
+      <button onclick="scrollResearch(1)" class="absolute right-0 top-1/2 -translate-y-1/2 bg-white/90 dark:bg-background-dark/90 p-3 rounded-full shadow-lg hover:bg-primary transition-all">
+        <span class="material-symbols-outlined">chevron_right</span>
+      </button>
+    </div>
+    <div class="flex flex-col text-center items-center mt-8">
+      <a href="{% url 'investigaciones' %}" class="bg-primary hover:bg-primary/90 text-black px-6 py-3 rounded-lg font-bold flex items-center gap-2 transition-all">
+        Ver todas las investigaciones
+        <span class="material-symbols-outlined">arrow_forward</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- About Us & Newsletter (Quiénes Somos) -->
+<section class="max-w-[1200px] mx-auto px-4 py-24" id="quienes-somos">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+    <div>
+      <h2 class="text-4xl font-bold mb-6">Quiénes Somos</h2>
+      <p class="text-lg opacity-80 mb-6 leading-relaxed">El Semillero de Ingeniería Agrícola de la Universidad Nacional de Colombia es un espacio académico interdisciplinario dedicado a la formación de jóvenes investigadores.</p>
+      <p class="text-lg opacity-80 mb-8 leading-relaxed">Nuestra misión es integrar la ciencia del suelo, la hidráulica, la maquinaria y la poscosecha con las nuevas tecnologías digitales para transformar el campo colombiano en un sector competitivo y sostenible.</p>
+      <div class="flex gap-8">
+        <div class="text-center">
+          <span class="text-3xl font-bold text-primary block">15+</span>
+          <span class="text-xs uppercase opacity-60">Proyectos</span>
+        </div>
+        <div class="text-center">
+          <span class="text-3xl font-bold text-primary block">40+</span>
+          <span class="text-xs uppercase opacity-60">Miembros</span>
+        </div>
+        <div class="text-center">
+          <span class="text-3xl font-bold text-primary block">8</span>
+          <span class="text-xs uppercase opacity-60">Publicaciones</span>
+        </div>
+      </div>
+    </div>
+    <div class="bg-primary/10 dark:bg-primary/5 p-10 rounded-2xl border-2 border-primary/20">
+      <div class="flex items-center gap-3 mb-4 text-primary">
+        <span class="material-symbols-outlined text-4xl">mail</span>
+        <h3 class="text-2xl font-bold text-[#0d1b0d] dark:text-white">Boletín Investigativo</h3>
+      </div>
+      <p class="mb-8 opacity-75">Suscríbete para recibir los resultados mensuales de nuestras investigaciones y convocatorias abiertas.</p>
+      <form method="post" action="{% url 'suscribirse' %}" class="flex flex-col gap-4">
+        {% csrf_token %}
+        <div class="relative">
+          <input name="correo" class="w-full px-4 py-4 rounded-xl border-none ring-1 ring-[#c0e4c0] dark:ring-[#1a331a] bg-white dark:bg-background-dark focus:ring-2 focus:ring-primary transition-all" placeholder="tu.email@unal.edu.co" type="email" required />
+        </div>
+        <button type="submit" class="bg-primary text-[#0d1b0d] font-bold py-4 rounded-xl shadow-lg hover:shadow-primary/20 transition-all flex justify-center items-center gap-2">
+          Suscribirme
+          <span class="material-symbols-outlined text-sm">send</span>
+        </button>
+        <p class="text-[10px] text-center opacity-50 mt-2">Al suscribirte aceptas el tratamiento de datos según la política institucional de la UNAL.</p>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %} {% block extra_js %}
+<script>
+  // Carrusel de destacados con transiciones suaves
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.carousel-item');
+  let autoPlayInterval;
+
+  function showSlide(n) {
+      slides[currentSlide].classList.remove('active');
+      slides[currentSlide].style.opacity = '0';
+
+      currentSlide = (n + slides.length) % slides.length;
+
+      slides[currentSlide].classList.add('active');
+      slides[currentSlide].style.opacity = '1';
+  }
+
+  function nextSlide() {
+      showSlide(currentSlide + 1);
+  }
+
+  function prevSlide() {
+      showSlide(currentSlide - 1);
+  }
+
+  // Auto-avanzar cada 5 segundos
+  function startAutoPlay() {
+      autoPlayInterval = setInterval(nextSlide, 5000);
+  }
+
+  function stopAutoPlay() {
+      clearInterval(autoPlayInterval);
+  }
+
+  // Iniciar autoplay
+  startAutoPlay();
+
+  // Pausar autoplay al interactuar
+  document.querySelectorAll('#carousel button').forEach(btn => {
+      btn.addEventListener('click', () => {
+          stopAutoPlay();
+          startAutoPlay();
+      });
+  });
+
+  // Carrusel de investigaciones con transición suave
+  let currentResearch = 0;
+  const researchCarousel = document.querySelector('#research-carousel > div');
+  const researchItems = {{ investigaciones|length }};
+  const maxScroll = Math.max(0, researchItems - 2);
+
+  function scrollResearch(direction) {
+      currentResearch += direction;
+
+      // Limitar el scroll
+      if (currentResearch < 0) currentResearch = 0;
+      if (currentResearch > maxScroll) currentResearch = maxScroll;
+
+      const percentage = -(currentResearch * 50);
+      researchCarousel.style.transform = `translateX(${percentage}%)`;
+  }
+
+  // Animaciones al hacer scroll (Intersection Observer)
+  const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -100px 0px'
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+          if (entry.isIntersecting) {
+              entry.target.style.opacity = '1';
+              entry.target.style.transform = 'translateY(0)';
+          }
+      });
+  }, observerOptions);
+
+  // Aplicar animaciones a elementos
+  document.addEventListener('DOMContentLoaded', () => {
+      // Animar tarjetas de noticias
+      document.querySelectorAll('#news-carousel > div > div').forEach((card, index) => {
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(30px)';
+          card.style.transition = `all 0.6s ease ${index * 0.1}s`;
+          observer.observe(card);
+      });
+
+      // Animar tarjetas de investigaciones
+      document.querySelectorAll('#research-carousel > div > div').forEach((card, index) => {
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(30px)';
+          card.style.transition = `all 0.6s ease ${index * 0.15}s`;
+          observer.observe(card);
+      });
+
+      // Animar sección de suscripción
+      const newsletter = document.querySelector('section:last-of-type > div');
+      if (newsletter) {
+          newsletter.style.opacity = '0';
+          newsletter.style.transform = 'translateY(30px)';
+          newsletter.style.transition = 'all 0.8s ease';
+          observer.observe(newsletter);
+      }
+  });
+
+  // Smooth scroll para enlaces internos
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+              target.scrollIntoView({
+                  behavior: 'smooth',
+                  block: 'start'
+              });
+          }
+      });
+  });
+</script>
+<style>
+  /* Transiciones suaves para carruseles */
+  #carousel .carousel-item {
+    transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  #research-carousel > div {
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  #news-carousel > div {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Animaciones hover mejoradas */
+  .group:hover {
+    transform: translateY(-4px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Botones con efecto ripple */
+  button,
+  a {
+    position: relative;
+    overflow: hidden;
+  }
+
+  button::before,
+  a::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition:
+      width 0.6s,
+      height 0.6s;
+  }
+
+  button:active::before,
+  a:active::before {
+    width: 300px;
+    height: 300px;
+  }
+</style>
+{% endblock %}

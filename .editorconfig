@@ -1,0 +1,25 @@
+# EditorConfig para proyecto Django
+root = true
+
+# Configuración por defecto
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Python
+[*.py]
+indent_style = space
+indent_size = 4
+
+# JavaScript
+[*.js]
+indent_style = space
+indent_size = 2
+
+# Plantillas Django - NO autoformatear
+[templates/**/*.html]
+# Desactivar formateo automático para evitar que rompa las etiquetas Django
+max_line_length = off
+insert_final_newline = false

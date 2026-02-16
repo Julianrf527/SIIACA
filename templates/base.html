@@ -1,0 +1,262 @@
+<!doctype html>
+{% load static %}
+<html class="light" lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>{% block title %}Semillero SIIACA{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#27ae60",
+              "background-light": "#f6f8f6",
+              "background-dark": "#102210",
+            },
+            fontFamily: {
+              display: ["Space Grotesk", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+      body {
+        font-family: "Space Grotesk", sans-serif;
+      }
+
+      /* Scroll suave global */
+      html {
+        scroll-behavior: smooth;
+      }
+
+      /* Transiciones suaves para todos los elementos interactivos */
+      * {
+        transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 150ms;
+      }
+
+      /* Animaciones para elementos con hover */
+      a,
+      button {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      a:hover,
+      button:hover {
+        transform: translateY(-1px);
+      }
+
+      /* Header con transición */
+      header {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      /* Animación de entrada para tarjetas */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .animate-fadeInUp {
+        animation: fadeInUp 0.6s ease-out;
+      }
+
+      /* Efecto de pulsación para botones */
+      button:active,
+      a:active {
+        transform: scale(0.98);
+      }
+
+      /* Mejora de performance para animaciones */
+      .will-change-transform {
+        will-change: transform;
+      }
+
+      /* Transiciones suaves para imágenes */
+      img {
+        transition:
+          transform 0.3s ease,
+          opacity 0.3s ease;
+      }
+
+      img:hover {
+        transform: scale(1.05);
+      }
+    </style>
+    {% block extra_css %}{% endblock %}
+  </head>
+  <body class="bg-background-light dark:bg-background-dark text-[#0d1b0d] dark:text-white transition-colors duration-300">
+    <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+      <!-- Top Navigation Bar -->
+      <header class="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-solid border-[#e7f3e7] dark:border-[#1a331a] px-4 md:px-20 py-3">
+        <div class="max-w-[1200px] mx-auto flex items-center justify-between whitespace-nowrap">
+          <div class="flex items-center gap-8">
+            <a href="{% url 'index' %}" class="flex items-center gap-3 text-[#0d1b0d] dark:text-white">
+              <div class="size-8 text-primary inline-flex items-center justify-center rounded-full bg-primary/10 dark:bg-primary/20 group">
+                <span class="material-symbols-outlined text-primary text-4xl">eco</span>
+              </div>
+              <div class="flex flex-col">
+                <h1 class="text-sm md:text-lg font-bold leading-tight tracking-tight">Semillero SIIACA</h1>
+                <span class="text-[10px] uppercase tracking-widest opacity-70">Universidad Nacional de Colombia</span>
+              </div>
+            </a>
+            <nav class="hidden lg:flex items-center gap-6">
+              <a class="text-sm font-medium hover:text-primary transition-colors" href="{% url 'index' %}">Inicio</a>
+              <a class="text-sm font-medium hover:text-primary transition-colors" href="{% url 'index' %}#noticias">Noticias</a>
+              <a class="text-sm font-medium hover:text-primary transition-colors" href="{% url 'index' %}#investigaciones">Investigaciones</a>
+              <a class="text-sm font-medium hover:text-primary transition-colors" href="{% url 'index' %}#quienes-somos">Quiénes Somos</a>
+            </nav>
+          </div>
+          <div class="flex items-center gap-4">
+            <form method="get" action="{% url 'investigaciones' %}" class="hidden md:flex items-center bg-[#e7f3e7] dark:bg-[#1a331a] rounded-lg px-3 py-1.5 focus-within:ring-2 ring-primary/50 transition-all">
+              <span class="material-symbols-outlined text-[#4c9a4c] text-xl">search</span>
+              <input name="q" class="bg-transparent border-none focus:ring-0 text-sm w-32 lg:w-48 placeholder:text-[#4c9a4c]" placeholder="Buscar investigación..." type="text" />
+            </form>
+          </div>
+        </div>
+      </header>
+
+      <!-- Mensajes de Django -->
+      {% if messages %}
+      <div class="max-w-[1200px] mx-auto px-4 py-4">
+        {% for message in messages %}
+        <div class="mb-4 p-4 rounded-lg {% if message.tags == 'success' %}bg-primary/20 text-[#0d1b0d]{% elif message.tags == 'error' %}bg-red-100 text-red-800{% else %}bg-yellow-100 text-yellow-800{% endif %}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <main class="flex-1">{% block content %}{% endblock %}</main>
+
+      <!-- Footer -->
+      <footer class="bg-white dark:bg-background-dark border-t border-[#e7f3e7] dark:border-[#1a331a] pt-16 pb-8 px-4 md:px-20">
+        <div class="max-w-[1200px] mx-auto">
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+            <div class="col-span-1 md:col-span-2">
+              <div class="flex items-center gap-3 mb-6">
+                <div class="inline-flex items-center justify-center rounded-full bg-primary/10">
+                  <span class="material-symbols-outlined text-primary text-4xl">eco</span>
+                </div>
+                <span class="font-bold text-lg">SIIACA - UNAL</span>
+              </div>
+              <p class="opacity-60 max-w-sm mb-6">Fomentando el desarrollo tecnológico del agro colombiano a través de la excelencia académica y la investigación rigurosa.</p>
+              <div class="flex gap-4">
+                <a class="p-2 bg-[#f0f9f0] dark:bg-[#1a331a] rounded-full text-primary hover:bg-primary hover:text-white transition-all" href="#">
+                  <span class="material-symbols-outlined text-xl">language</span>
+                </a>
+                <a class="p-2 bg-[#f0f9f0] dark:bg-[#1a331a] rounded-full text-primary hover:bg-primary hover:text-white transition-all" href="#">
+                  <span class="material-symbols-outlined text-xl">person_pin_circle</span>
+                </a>
+                <a class="p-2 bg-[#f0f9f0] dark:bg-[#1a331a] rounded-full text-primary hover:bg-primary hover:text-white transition-all" href="#">
+                  <span class="material-symbols-outlined text-xl">account_tree</span>
+                </a>
+              </div>
+            </div>
+            <div>
+              <h4 class="font-bold mb-6 text-sm uppercase tracking-widest">Contacto</h4>
+              <ul class="space-y-4 text-sm opacity-70">
+                <li class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-primary text-base">location_on</span>
+                  Ciudad Universitaria, Bogotá
+                </li>
+                <li class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-primary text-base">mail</span>
+                  semilleroSIIACA_bog@unal.edu.co
+                </li>
+                <li class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-primary text-base">call</span>
+                  (+57) 601 3165000
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="font-bold mb-6 text-sm uppercase tracking-widest">Enlaces</h4>
+              <ul class="space-y-4 text-sm opacity-70">
+                <li>
+                  <a class="hover:text-primary transition-colors" href="#">Repositorio Institucional</a>
+                </li>
+                <li>
+                  <a class="hover:text-primary transition-colors" href="#">Facultad de Ingeniería</a>
+                </li>
+                <li>
+                  <a class="hover:text-primary transition-colors" href="#">Convocatorias</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="pt-8 border-t border-[#e7f3e7] dark:border-[#1a331a] flex flex-col md:flex-row justify-between items-center gap-4 text-xs opacity-50">
+            <p>© 2024 Universidad Nacional de Colombia - Semillero SIIACA.</p>
+            <div class="flex gap-6">
+              <a href="#">Privacidad</a>
+              <a href="#">Términos de uso</a>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      // Animación del header al hacer scroll
+      let lastScroll = 0;
+      const header = document.querySelector("header");
+
+      window.addEventListener("scroll", () => {
+        const currentScroll = window.pageYOffset;
+
+        if (currentScroll > 100) {
+          header.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.1)";
+        } else {
+          header.style.boxShadow = "none";
+        }
+
+        lastScroll = currentScroll;
+      });
+
+      // Smooth scroll global para todos los enlaces con #
+      document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+          anchor.addEventListener("click", function (e) {
+            const href = this.getAttribute("href");
+            if (href !== "#" && href.length > 1) {
+              e.preventDefault();
+              const target = document.querySelector(href);
+              if (target) {
+                target.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start",
+                });
+              }
+            }
+          });
+        });
+      });
+    </script>
+
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>

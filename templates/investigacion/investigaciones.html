@@ -1,0 +1,173 @@
+{% extends 'base.html' %} {% load static %} {% block title %}Repositorio de Investigaciones - Ingeniería Agrícola UNAL{% endblock %} {% block content %}
+<main class="max-w-[1280px] mx-auto px-4 lg:px-10 py-10">
+  <!-- Page Heading -->
+  <div class="mb-10">
+    <h2 class="text-5xl font-black tracking-tight leading-none mb-4">Repositorio de Investigaciones</h2>
+    <p class="text-xl text-[#4c9a4c] dark:text-primary/80 max-w-2xl">Acceso abierto a la producción científica del Grupo de Investigación en Ingeniería Agrícola de la Universidad Nacional de Colombia.</p>
+  </div>
+
+  <!-- Search and Filter Bar Section -->
+  <div class="space-y-6 mb-12">
+    <!-- Search Bar -->
+    <form method="get" action="{% url 'investigaciones' %}" class="w-full">
+      <label class="relative flex items-center h-14 w-full">
+        <div class="absolute left-4 text-[#4c9a4c] flex items-center justify-center">
+          <span class="material-symbols-outlined">search</span>
+        </div>
+        <input name="q" value="{{ query }}" class="w-full h-full pl-12 pr-4 rounded-xl border-none bg-white dark:bg-[#1a331a] shadow-sm text-base placeholder:text-[#4c9a4c]/60 focus:ring-2 focus:ring-primary/50" placeholder="Buscar por palabra clave, título, autor o año..." type="text" />
+      </label>
+    </form>
+
+    <!-- Category Chips -->
+    <div class="flex flex-wrap gap-2">
+      <a href="{% url 'investigaciones' %}" class="flex h-10 items-center justify-center gap-2 rounded-full {% if not tag_actual %}bg-primary text-[#0d1b0d]{% else %}bg-white dark:bg-[#1a331a] border border-[#e7f3e7] dark:border-transparent hover:bg-primary/10{% endif %} px-6 font-bold shadow-sm transition-all">
+        <span>Todos</span>
+      </a>
+      {% for tag_value, tag_label in tags_disponibles %}
+      <a href="?tag={{ tag_value }}" class="flex h-10 items-center justify-center gap-2 rounded-full {% if tag_actual == tag_value %}bg-primary text-[#0d1b0d]{% else %}bg-white dark:bg-[#1a331a] border border-[#e7f3e7] dark:border-transparent hover:bg-primary/10{% endif %} px-5 text-sm font-medium transition-all">
+        <span>{{ tag_label }}</span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Results Summary -->
+  {% if query or tag_actual %}
+  <div class="mb-6 text-[#4c9a4c]">
+    <p>Mostrando {{ page_obj.paginator.count }} resultado{{ page_obj.paginator.count|pluralize }} {% if query %}para "{{ query }}"{% endif %} {% if tag_actual %}en {{ tag_actual }}{% endif %}</p>
+  </div>
+  {% endif %}
+
+  <!-- Image Grid / Research Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    {% for investigacion in page_obj %}
+    <div class="group flex flex-col bg-white dark:bg-[#1a331a] rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow border border-transparent hover:border-primary/20">
+      <div class="w-full bg-center bg-no-repeat aspect-video bg-cover overflow-hidden" style="background-image: url('{% if investigacion.foto %}{{ investigacion.foto.url }}{% else %}https://via.placeholder.com/600x400/13ec13/000000?text=Investigacion{% endif %}');"></div>
+      <div class="p-6 flex-1 flex flex-col">
+        <span class="text-[10px] uppercase tracking-widest font-bold text-primary mb-2">{{ investigacion.tags }}</span>
+        <h3 class="text-xl font-bold leading-tight mb-2 group-hover:text-primary transition-colors">{{ investigacion.titulo }}</h3>
+        <p class="text-[#4c9a4c] dark:text-primary/70 text-sm font-semibold mb-3">{{ investigacion.autores }} - {{ investigacion.fecha_publicacion.year }}</p>
+        <p class="text-sm text-gray-600 dark:text-gray-300 line-clamp-3 mb-6">{{ investigacion.descripcion|truncatewords:20 }}</p>
+        <div class="mt-auto">
+          {% if investigacion.url_doc %}
+          <a href="{{ investigacion.url_doc.url }}" target="_blank" class="w-full py-3 bg-primary text-[#0d1b0d] rounded-lg font-bold flex items-center justify-center gap-2 hover:brightness-105 active:scale-[0.98] transition-all">
+            <span class="material-symbols-outlined">download</span>
+            Descargar PDF
+          </a>
+          {% else %}
+          <div class="w-full py-3 bg-gray-400 text-gray-700 rounded-lg font-bold flex items-center justify-center gap-2 cursor-not-allowed">
+            <span class="material-symbols-outlined">info</span>
+            Sin documento disponible
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="col-span-full text-center py-12">
+      <span class="material-symbols-outlined text-6xl text-[#4c9a4c] mb-4">search_off</span>
+      <p class="text-xl text-[#4c9a4c]">No se encontraron investigaciones.</p>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination -->
+  {% if page_obj.paginator.num_pages > 1 %}
+  <div class="mt-16 flex items-center justify-center gap-3">
+    <!-- Previous Button -->
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if tag_actual %}&tag={{ tag_actual }}{% endif %}" class="flex items-center justify-center size-10 rounded-lg bg-white dark:bg-[#1a331a] border border-[#e7f3e7] dark:border-transparent text-[#0d1b0d] dark:text-white hover:border-primary transition-colors">
+      <span class="material-symbols-outlined">chevron_left</span>
+    </a>
+    {% else %}
+    <span class="flex items-center justify-center size-10 rounded-lg bg-white dark:bg-[#1a331a] border border-[#e7f3e7] dark:border-transparent text-[#0d1b0d] dark:text-white opacity-50">
+      <span class="material-symbols-outlined">chevron_left</span>
+    </span>
+    {% endif %}
+
+    <!-- Page Numbers -->
+    {% for num in page_obj.paginator.page_range %} {% if page_obj.number == num %}
+    <span class="flex items-center justify-center size-10 rounded-lg bg-primary text-[#0d1b0d] font-bold">{{ num }}</span>
+    {% elif num == 1 or num == page_obj.paginator.num_pages %}
+    <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if tag_actual %}&tag={{ tag_actual }}{% endif %}" class="flex items-center justify-center size-10 rounded-lg bg-white dark:bg-[#1a331a] border border-[#e7f3e7] dark:border-transparent text-[#0d1b0d] dark:text-white hover:border-primary transition-colors">{{ num }}</a>
+    {% elif num >= page_obj.number|add:'-2' and num <= page_obj.number|add:'2' %}
+    <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if tag_actual %}&tag={{ tag_actual }}{% endif %}" class="flex items-center justify-center size-10 rounded-lg bg-white dark:bg-[#1a331a] border border-[#e7f3e7] dark:border-transparent text-[#0d1b0d] dark:text-white hover:border-primary transition-colors">{{ num }}</a>
+    {% endif %} {% endfor %}
+
+    <!-- Next Button -->
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if tag_actual %}&tag={{ tag_actual }}{% endif %}" class="flex items-center justify-center size-10 rounded-lg bg-white dark:bg-[#1a331a] border border-[#e7f3e7] dark:border-transparent text-[#0d1b0d] dark:text-white hover:border-primary transition-colors">
+      <span class="material-symbols-outlined">chevron_right</span>
+    </a>
+    {% else %}
+    <span class="flex items-center justify-center size-10 rounded-lg bg-white dark:bg-[#1a331a] border border-[#e7f3e7] dark:border-transparent text-[#0d1b0d] dark:text-white opacity-50">
+      <span class="material-symbols-outlined">chevron_right</span>
+    </span>
+    {% endif %}
+  </div>
+  {% endif %}
+</main>
+{% endblock %} {% block extra_js %}
+<script>
+  // Animaciones de entrada para tarjetas de investigaciones
+  document.addEventListener("DOMContentLoaded", () => {
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: "0px 0px -50px 0px",
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = "1";
+          entry.target.style.transform = "translateY(0)";
+        }
+      });
+    }, observerOptions);
+
+    // Animar tarjetas de investigaciones
+    const cards = document.querySelectorAll("main > div:last-of-type > div");
+    cards.forEach((card, index) => {
+      card.style.opacity = "0";
+      card.style.transform = "translateY(30px)";
+      card.style.transition = `all 0.6s cubic-bezier(0.4, 0, 0.2, 1) ${index * 0.05}s`;
+      observer.observe(card);
+    });
+
+    // Animar el header de la página
+    const header = document.querySelector("main > div:first-of-type");
+    if (header) {
+      header.style.opacity = "0";
+      header.style.transform = "translateY(-20px)";
+      header.style.transition = "all 0.6s cubic-bezier(0.4, 0, 0.2, 1)";
+      setTimeout(() => {
+        header.style.opacity = "1";
+        header.style.transform = "translateY(0)";
+      }, 100);
+    }
+
+    // Animar la barra de búsqueda
+    const searchBar = document.querySelector("main > div:nth-of-type(2)");
+    if (searchBar) {
+      searchBar.style.opacity = "0";
+      searchBar.style.transform = "translateY(-10px)";
+      searchBar.style.transition = "all 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s";
+      setTimeout(() => {
+        searchBar.style.opacity = "1";
+        searchBar.style.transform = "translateY(0)";
+      }, 100);
+    }
+  });
+
+  // Efecto de hover mejorado para tarjetas
+  document.querySelectorAll(".group").forEach((card) => {
+    card.addEventListener("mouseenter", function () {
+      this.style.transform = "translateY(-8px)";
+    });
+
+    card.addEventListener("mouseleave", function () {
+      this.style.transform = "translateY(0)";
+    });
+  });
+</script>
+{% endblock %}
