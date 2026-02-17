@@ -47,6 +47,9 @@
               <h3 class="text-xl font-bold mb-2 group-hover:text-primary transition-colors leading-snug">{{ noticia.titulo }}</h3>
               <p class="text-sm text-[#4c9a4c] mb-4">{{ noticia.fecha_publicacion|date:"F d, Y" }}</p>
               <p class="text-sm opacity-80 mb-4 line-clamp-3">{{ noticia.descripcion|truncatewords:20 }}</p>
+              <div class="mt-auto">
+                <a href="{% url 'noticia_detalle' noticia.pk %}" class="inline-flex items-center gap-2 text-sm font-bold text-primary hover:underline">Leer más <span class="material-symbols-outlined">arrow_forward</span></a>
+              </div>
             </div>
           </div>
         </div>

@@ -88,3 +88,21 @@ def suscribirse(request):
     
     # Redirigir a la página de inicio
     return redirect('index')
+
+
+def noticia_detalle(request, pk):
+    """Muestra el detalle completo de una noticia."""
+    noticia = Noticia.objects.filter(pk=pk).first()
+    if not noticia:
+        from django.http import Http404
+        raise Http404("Noticia no encontrada")
+
+    # Últimas 2 noticias para la columna lateral
+    noticias_recientes = Noticia.objects.order_by('-fecha_publicacion')[:2]
+
+    context = {
+        'noticia': noticia,
+        'noticias_recientes': noticias_recientes,
+    }
+
+    return render(request, 'investigacion/noticia_detalle.html', context)

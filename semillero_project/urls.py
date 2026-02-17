@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from semillero_project import views as project_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,3 +29,10 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    # Ruta de previsualización de la página 404 para desarrolladores
+    urlpatterns += [
+        path('__show-404/', project_views.preview_404, name='preview_404'),
+    ]
+
+# Handler personalizado para 404 (usa `semillero_project.views.custom_404`)
+handler404 = 'semillero_project.views.custom_404'
